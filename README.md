@@ -53,8 +53,6 @@ conda install setuptools
 
 ## Comparison with Other Trackers
 
-## Comparison with Other Trackers
-
 OC-SORT performs well in occlusion scenarios compared to other trackers:
 
 1. **DeepSORT**: Requires appearance features, computationally more expensive
