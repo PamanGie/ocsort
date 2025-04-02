@@ -2,7 +2,7 @@
 
 This repository contains implementation of OC-SORT (Observation-Centric SORT) for multi-object tracking using YOLOv8 as the detector. OC-SORT is an improved version of SORT algorithm that handles occlusions better.
 
-![OC-SORT Tracking Demo](https://i.postimg.cc/tJMDQV8y/i-Screen-Shoter-Any-Desk-250402174412.jpg)
+![OC-SORT Tracking Demo](https://i.postimg.cc/nLSkgP5g/i-Screen-Shoter-Any-Desk-250402174754.jpg)
 
 ## Features
 
