@@ -7,6 +7,9 @@ import torch
 # Inisialisasi model YOLO
 model = YOLO("yolov8n.pt")
 
+# Dapatkan nama kelas langsung dari model
+class_names = model.names
+
 # Inisialisasi OC-SORT tracker
 tracker = OCSort(
     det_thresh=0.3,
@@ -44,22 +47,21 @@ while True:
         # Format deteksi untuk OC-SORT: [x1, y1, x2, y2, score, class_id]
         detections.append([x1, y1, x2, y2, score, class_id])
     
-    # Konversi ke numpy array atau torch tensor
+    # Konversi ke torch tensor
     if len(detections) > 0:
-        # Konversi ke torch tensor karena OC-SORT mengharapkan tensor
         detections_tensor = torch.tensor(detections)
     else:
-        # Kosong dengan format yang sesuai
         detections_tensor = torch.zeros((0, 6))
     
-    # Update tracker dengan deteksi dan parameter placeholder
+    # Update tracker dengan deteksi
     tracks = tracker.update(detections_tensor, None)
     
     # Visualisasi hasil tracking
     for track in tracks:
-        x1, y1, x2, y2, track_id, cls, conf = track  # OC-SORT mengembalikan [x1,y1,x2,y2,id,class,conf]
+        x1, y1, x2, y2, track_id, cls, conf = track  # [x1,y1,x2,y2,id,class,conf]
         x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
         track_id = int(track_id)
+        class_id = int(cls)
         
         # Pilih warna berdasarkan track_id
         color = COLORS[track_id % len(COLORS)].tolist()
@@ -67,8 +69,17 @@ while True:
         # Gambar bounding box
         cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
         
-        # Gambar ID dan kelas
-        text = f"ID: {track_id}, Class: {int(cls)}"
+        # Dapatkan nama kelas dari model
+        if class_id in class_names:
+            class_name = class_names[class_id]
+        else:
+            class_name = f"Unknown-{class_id}"
+        
+        # Gambar ID dan nama kelas
+        confidence = round(float(conf) * 100, 1)
+        text = f"ID: {track_id} | {class_name} {confidence}%"
+        
+        # Tentukan posisi teks (sedikit di atas bounding box)
         cv2.putText(frame, text, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
     
     # Tampilkan frame
